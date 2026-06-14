@@ -16,7 +16,7 @@ const app = express();
 app.use(cors({
     origin: [
         'http://localhost:5173', // Local development
-        'https://picnik-uz.vercel.app/'
+        'https://picnik-uz.vercel.app'
     ],
     credentials: true
 }));
