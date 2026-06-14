@@ -6,6 +6,7 @@ import { ArrowRight, Truck, ShieldCheck, RefreshCw, Heart } from 'lucide-react';
 import Footer from '../components/Footer';
 import { useWishlist } from '../context/WishlistContext';
 import { motion } from 'framer-motion';
+import api from '../utils/api';
 
 export default function Home() {
     const [products, setProducts] = useState([]);
@@ -25,7 +26,8 @@ export default function Home() {
                 if (token) {
                     // Admin bo'lsa, top mahsulotlar API dan olish
                     try {
-                        const { data } = await axios.get('http://localhost:5000/api/admin/dashboard', {
+
+                        const { data } = await api.get('/api/admin/dashboard', {
                             headers: { Authorization: `Bearer ${token}` }
                         });
 
@@ -45,7 +47,8 @@ export default function Home() {
 
                 // Agar top mahsulotlar bo'lmasa, oddiy mahsulotlarni olish
                 if (productsData.length === 0) {
-                    const { data } = await axios.get('http://localhost:5000/api/products?limit=4');
+                    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                    const { data } = await api.get('/api/products?limit=4');
                     productsData = data.products || [];
                 }
 

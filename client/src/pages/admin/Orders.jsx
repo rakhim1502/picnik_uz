@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import ExportButton from '../../components/admin/ExportButton';
 
 export default function AdminOrders() {
@@ -12,7 +12,7 @@ export default function AdminOrders() {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const { data } = await axios.get('http://localhost:5000/api/admin/orders', config);
+                const { data } = await api.get('/api/admin/orders', config);
                 setOrders(data);
             } catch (error) {
                 console.error("Buyurtmalarni yuklashda xatolik", error);
@@ -26,9 +26,9 @@ export default function AdminOrders() {
 
     const updateStatus = async (orderId, newStatus) => {
         try {
-            await axios.put(`http://localhost:5000/api/admin/orders/${orderId}`, { status: newStatus }, config);
+            await api.put(`/api/admin/orders/${orderId}`, { status: newStatus }, config);
 
-            const { data } = await axios.get('http://localhost:5000/api/admin/orders', config);
+            const { data } = await api.get('/api/admin/orders', config);
             setOrders(data);
         } catch (error) {
             console.error("Holatni o'zgartirishda xatolik", error);

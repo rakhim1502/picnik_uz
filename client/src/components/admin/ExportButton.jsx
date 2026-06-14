@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Download, Loader2, Calendar, Filter } from 'lucide-react';
@@ -25,12 +25,9 @@ export default function ExportButton({ type = 'orders' }) {
             if (filters.endDate) params.append('endDate', filters.endDate);
             if (filters.status !== 'all') params.append('status', filters.status);
 
-            const { data } = await axios.get(
-                `http://localhost:5000/api/admin/export/${type}?${params}`,
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
-            );
+            const { data } = await api.get(`/api/admin/export/${type}?${params}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
             if (data.success && data.data.length > 0) {
                 // Excel fayl yaratish

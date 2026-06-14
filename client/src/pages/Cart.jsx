@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
+
 import Navbar from '../components/Navbar';
 import { Trash2, Minus, Plus } from 'lucide-react';
+import api from '../utils/api';
 
 export default function Cart() {
     const { cartItems, addToCart, removeFromCart, clearCart, totalPrice } = useCart();
@@ -37,7 +39,7 @@ export default function Cart() {
                 paymentMethod
             };
 
-            const { data } = await axios.post('http://localhost:5000/api/orders', orderData);
+            const { data } = await api.post('/api/orders', orderData);
 
             if (data) {
                 clearCart();

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import {
     ShoppingCart, DollarSign, Package, TrendingUp,
     Clock, CheckCircle, XCircle, AlertCircle
@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import RevenueChart from '../../components/admin/RevenueChart';
 import CategoryChart from '../../components/admin/CategoryChart';
 import WeeklyOrdersChart from '../../components/admin/WeeklyOrdersChart';
+
 
 export default function Dashboard() {
     const [stats, setStats] = useState(null);
@@ -28,7 +29,7 @@ export default function Dashboard() {
                     headers: { Authorization: `Bearer ${token}` }
                 };
 
-                const { data } = await axios.get('http://localhost:5000/api/admin/dashboard', config);
+                const { data } = await api.get('/api/admin/dashboard', config);
                 setStats(data);
             } catch (error) {
                 if (error.response?.status === 401) {

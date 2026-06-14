@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
@@ -12,7 +12,7 @@ export default function CategoryChart() {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const { data } = await axios.get('http://localhost:5000/api/admin/charts/categories', {
+                const { data } = await api.get('/api/admin/charts/categories', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 

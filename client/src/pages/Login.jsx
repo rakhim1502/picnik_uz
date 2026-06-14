@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
@@ -24,7 +24,7 @@ export default function Login() {
         setLoading(true);
 
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/login', formData);
+            const { data } = await api.post('/api/auth/login', formData);
 
             if (data.success) {
                 // Foydalanuvchi ma'lumotlarini saqlash

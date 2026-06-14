@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { Line } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -31,7 +31,7 @@ export default function RevenueChart() {
     useEffect(() => {
         const fetchRevenue = async () => {
             try {
-                const { data } = await axios.get('http://localhost:5000/api/admin/charts/revenue', {
+                const { data } = await api.get('/api/admin/charts/revenue', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 

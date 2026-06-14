@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
+
 import {
     Truck, ShieldCheck, Star, ShoppingCart,
     MessageCircle, Heart, Minus, Plus, Loader2
@@ -10,6 +11,7 @@ import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../utils/api';
 
 export default function ProductDetail() {
     const { slug } = useParams();
@@ -27,11 +29,11 @@ export default function ProductDetail() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const { data } = await axios.get(`http://localhost:5000/api/products/${slug}`);
+                const { data } = await api.get(`/api/products/${slug}`);
                 setProduct(data);
                 setSelectedImage(0); // Rasmni reset qilish
 
-                const reviewsRes = await axios.get(`http://localhost:5000/api/reviews/${data._id}`);
+                const reviewsRes = await api.get(`/api/reviews/${data._id}`);
                 setReviews(reviewsRes.data);
             } catch (error) {
                 console.error("Mahsulotni yuklashda xatolik", error);

@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageGallery from './ImageGallery';
 
@@ -80,9 +80,9 @@ export default function ProductModal({ isOpen, onClose, onSuccess, editProduct }
             };
 
             if (isEditMode && editProduct) {
-                await axios.put(`http://localhost:5000/api/admin/products/${editProduct._id}`, payload, config);
+                await api.put(`/api/admin/products/${editProduct._id}`, payload, config);
             } else {
-                await axios.post('http://localhost:5000/api/admin/products', payload, config);
+                await api.post('/api/admin/products', payload, config);
             }
 
             onSuccess();

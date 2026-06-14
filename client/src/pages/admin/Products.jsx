@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { Plus, Trash2, Edit, Package } from 'lucide-react';
 import ProductModal from '../../components/admin/ProductModal';
 import { motion } from 'framer-motion';
@@ -21,7 +21,7 @@ export default function AdminProducts() {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get('http://localhost:5000/api/admin/products', config);
+            const { data } = await api.get('/api/admin/products', config);
             setProducts(data);
         } catch (error) {
             console.error("Mahsulotlarni yuklashda xatolik", error);
@@ -41,7 +41,7 @@ export default function AdminProducts() {
 
         setDeletingId(id);
         try {
-            await axios.delete(`http://localhost:5000/api/admin/products/${id}`, config);
+            await api.delete(`/api/admin/products/${id}`, config);
             setProducts(products.filter(p => p._id !== id));
             alert("✅ Mahsulot o'chirildi");
         } catch (error) {

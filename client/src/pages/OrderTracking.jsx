@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Search, Package, Truck, CheckCircle, Clock, XCircle, MapPin } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -24,7 +24,7 @@ export default function OrderTracking() {
                 ? { orderId: searchValue }
                 : { phone: searchValue };
 
-            const { data } = await axios.get('http://localhost:5000/api/orders/track', { params });
+            const { data } = await api.get('/api/orders/track', { params });
             setOrder(data);
         } catch (err) {
             setError(err.response?.data?.message || 'Buyurtma topilmadi');

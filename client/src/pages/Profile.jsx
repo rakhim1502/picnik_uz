@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { User, Package, Mail, LogOut, Clock, CheckCircle, XCircle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
@@ -25,7 +25,7 @@ export default function Profile() {
         const fetchOrders = async () => {
             try {
                 const token = localStorage.getItem('piknic_token');
-                const { data } = await axios.get('http://localhost:5000/api/orders/my-orders', {
+                const { data } = await api.get('/api/orders/my-orders', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setOrders(data);

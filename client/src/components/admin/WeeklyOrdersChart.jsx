@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -27,7 +27,7 @@ export default function WeeklyOrdersChart() {
     useEffect(() => {
         const fetchWeekly = async () => {
             try {
-                const { data } = await axios.get('http://localhost:5000/api/admin/charts/weekly-orders', {
+                const { data } = await api.get('/api/admin/charts/weekly-orders', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 

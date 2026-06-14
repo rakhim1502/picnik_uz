@@ -5,7 +5,6 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
-
 export default function Wishlist() {
     const navigate = useNavigate();
     const { wishlist, toggleWishlist, isInWishlist } = useWishlist();

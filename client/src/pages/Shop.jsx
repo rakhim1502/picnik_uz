@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
+
 import { Link } from 'react-router-dom';
 import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useWishlist } from '../context/WishlistContext';
+import api from '../utils/api';
 
 const categories = [
     { id: 'all', name: 'Barchasi' },
@@ -45,7 +47,7 @@ export default function Shop() {
                 if (sortBy !== 'newest') params.append('sort', sortBy);
                 params.append('page', pagination.page);
 
-                const { data } = await axios.get(`http://localhost:5000/api/products?${params}`);
+                const { data } = await api.get(`/api/products?${params}`);
                 setProducts(data.products);
                 setPagination(data.pagination);
             } catch (error) {
