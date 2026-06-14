@@ -9,6 +9,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ProductDetail() {
     const { slug } = useParams();
@@ -21,14 +22,15 @@ export default function ProductDetail() {
     const [quantity, setQuantity] = useState(1);
     const [reviews, setReviews] = useState([]);
     const [addingToCart, setAddingToCart] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(0); // ← YANGI
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const { data } = await axios.get(`http://localhost:5000/api/products/${slug}`);
                 setProduct(data);
+                setSelectedImage(0); // Rasmni reset qilish
 
-                // Sharhlarni yuklash
                 const reviewsRes = await axios.get(`http://localhost:5000/api/reviews/${data._id}`);
                 setReviews(reviewsRes.data);
             } catch (error) {
@@ -43,18 +45,18 @@ export default function ProductDetail() {
 
     const formatPrice = (price) => new Intl.NumberFormat('uz-UZ').format(price);
 
+    // Barcha rasmlar massivi
+    const allImages = product?.images?.length > 0
+        ? product.images
+        : (product?.image ? [product.image] : []);
+
     const handleAddToCart = async () => {
         if (!product) return;
-
         setAddingToCart(true);
-
-        // Mahsulotga quantity qo'shish
         const productWithQty = { ...product, qty: quantity };
         addToCart(productWithQty);
-
         setTimeout(() => {
             setAddingToCart(false);
-            // Savat sahifasiga o'tish yoki xabar ko'rsatish
             if (window.confirm('Mahsulot savatga qo\'shildi! Savatga o\'tishni xohlaysizmi?')) {
                 navigate('/cart');
             }
@@ -63,7 +65,6 @@ export default function ProductDetail() {
 
     const handleBuyNow = () => {
         if (!product) return;
-
         const productWithQty = { ...product, qty: quantity };
         addToCart(productWithQty);
         navigate('/cart');
@@ -71,16 +72,14 @@ export default function ProductDetail() {
 
     const handleTelegramOrder = () => {
         if (!product) return;
-
         const message = encodeURIComponent(
             `Salom! Men quyidagi mahsulotni buyurtma qilmoqchiman:\n\n` +
             `📦 *${product.name_uz}*\n` +
             `💰 Narxi: ${formatPrice(product.price)} so'm\n` +
             `🔢 Miqdori: ${quantity} ta\n` +
-            ` Link: ${window.location.href}\n\n` +
+            `🔗 Link: ${window.location.href}\n\n` +
             `Iltimos, buyurtmani rasmiylashtirishda yordam bering.`
         );
-
         window.open(`https://t.me/piknic_uz_manager?text=${message}`, '_blank');
     };
 
@@ -125,30 +124,80 @@ export default function ProductDetail() {
             <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
 
-                    {/* Rasm */}
+                    {/* 🖼️ RASM GALEREYASI - YANGI */}
                     <div className="space-y-4">
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
-                            <img
-                                src={product.image}
-                                alt={product.name_uz}
-                                className="w-full h-full object-cover aspect-square"
-                            />
-                        </div>
+                        {/* Asosiy rasm */}
+                        <motion.div
+                            className="bg-white rounded-2xl overflow-hidden shadow-sm aspect-square relative"
+                            layout
+                        >
+                            <AnimatePresence mode="wait">
+                                <motion.img
+                                    key={selectedImage}
+                                    src={allImages[selectedImage]}
+                                    alt={product.name_uz}
+                                    className="w-full h-full object-cover"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.3 }}
+                                />
+                            </AnimatePresence>
+
+                            {/* Chegirma badge */}
+                            {product.oldPrice && (
+                                <motion.div
+                                    className="absolute top-4 left-4 bg-brand-accent text-white text-sm font-bold px-3 py-1.5 rounded-full shadow-lg"
+                                    animate={{ scale: [1, 1.05, 1] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                >
+                                    -{Math.round((1 - product.price / product.oldPrice) * 100)}%
+                                </motion.div>
+                            )}
+
+                            {/* Rasm hisoblagich */}
+                            {allImages.length > 1 && (
+                                <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                                    {selectedImage + 1} / {allImages.length}
+                                </div>
+                            )}
+                        </motion.div>
+
+                        {/* Kichik rasmlar (thumbnail) */}
+                        {allImages.length > 1 && (
+                            <div className="grid grid-cols-5 gap-2">
+                                {allImages.map((img, idx) => (
+                                    <motion.button
+                                        key={idx}
+                                        onClick={() => setSelectedImage(idx)}
+                                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === idx
+                                                ? 'border-brand-green ring-2 ring-brand-green/20 scale-105'
+                                                : 'border-gray-200 hover:border-gray-300 opacity-70 hover:opacity-100'
+                                            }`}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        <img
+                                            src={img}
+                                            alt={`Rasm ${idx + 1}`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </motion.button>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Mahsulot ma'lumotlari */}
                     <div className="space-y-6">
-                        {/* Kategoriya */}
                         <span className="text-brand-accent font-semibold text-sm uppercase tracking-wider">
                             {product.category}
                         </span>
 
-                        {/* Nomi */}
                         <h1 className="text-3xl md:text-4xl font-bold text-brand-dark">
                             {product.name_uz}
                         </h1>
 
-                        {/* Reyting */}
                         <div className="flex items-center gap-2">
                             <div className="flex text-yellow-400">
                                 {[...Array(5)].map((_, i) => (
@@ -163,9 +212,8 @@ export default function ProductDetail() {
                             </span>
                         </div>
 
-                        {/* Narx */}
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <div className="flex items-baseline gap-3 mb-2">
+                            <div className="flex items-baseline gap-3 mb-2 flex-wrap">
                                 <span className="text-4xl font-bold text-brand-green">
                                     {formatPrice(product.price)} so'm
                                 </span>
@@ -181,7 +229,6 @@ export default function ProductDetail() {
                             </p>
                         </div>
 
-                        {/* Miqdor tanlash */}
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                             <label className="block text-sm font-semibold text-gray-700 mb-3">
                                 Miqdor:
@@ -205,7 +252,6 @@ export default function ProductDetail() {
                             </div>
                         </div>
 
-                        {/* Yetkazib berish */}
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                             <div className="flex items-start gap-3 mb-3">
                                 <Truck className="w-5 h-5 text-brand-green mt-1" />
@@ -219,12 +265,13 @@ export default function ProductDetail() {
                             </div>
                         </div>
 
-                        {/* BUYURTMA TUGMALARI - ASOSIY QISM */}
                         <div className="space-y-3">
-                            <button
+                            <motion.button
                                 onClick={handleAddToCart}
                                 disabled={addingToCart}
                                 className="w-full bg-brand-green text-white font-bold py-4 rounded-xl hover:bg-brand-green/90 transition flex items-center justify-center gap-3 disabled:opacity-50 shadow-lg shadow-brand-green/30"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                             >
                                 {addingToCart ? (
                                     <>
@@ -237,50 +284,53 @@ export default function ProductDetail() {
                                         Savatga qo'shish
                                     </>
                                 )}
-                            </button>
+                            </motion.button>
 
                             <div className="grid grid-cols-2 gap-3">
-                                <button
+                                <motion.button
                                     onClick={handleBuyNow}
                                     className="bg-brand-accent text-white font-bold py-4 rounded-xl hover:bg-brand-accent/90 transition flex items-center justify-center gap-2"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                 >
                                     Hozir sotib olish
-                                </button>
+                                </motion.button>
 
-                                <button
+                                <motion.button
                                     onClick={handleTelegramOrder}
                                     className="bg-[#0088cc] text-white font-bold py-4 rounded-xl hover:bg-[#0077b5] transition flex items-center justify-center gap-2"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                 >
                                     <MessageCircle className="w-6 h-6" />
                                     Telegram orqali
-                                </button>
+                                </motion.button>
                             </div>
 
-                            {/* Wishlist tugmasi */}
-                            <button
+                            <motion.button
                                 onClick={() => toggleWishlist(product._id)}
                                 className={`w-full border-2 font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2 ${isInWishlist(product._id)
-                                        ? 'border-red-500 text-red-500 bg-red-50'
-                                        : 'border-gray-300 text-gray-700 hover:border-red-300'
+                                    ? 'border-red-500 text-red-500 bg-red-50'
+                                    : 'border-gray-300 text-gray-700 hover:border-red-300'
                                     }`}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                             >
                                 <Heart className={`w-5 h-5 ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
                                 {isInWishlist(product._id) ? 'Sevimlilarda' : 'Sevimlilarga qo\'shish'}
-                            </button>
+                            </motion.button>
                         </div>
                     </div>
                 </div>
 
                 {/* Tavsif va Sharhlar */}
                 <div className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Tavsif */}
                     <div className="lg:col-span-2 bg-white rounded-2xl p-8 shadow-sm">
                         <h3 className="text-2xl font-bold text-brand-dark mb-4">Mahsulot haqida</h3>
                         <p className="text-gray-700 leading-relaxed">
                             {product.description || 'Bu mahsulot haqida to\'liq ma\'lumot tez orada qo\'shiladi.'}
                         </p>
 
-                        {/* Xususiyatlar */}
                         <div className="mt-6 pt-6 border-t">
                             <h4 className="font-semibold text-brand-dark mb-4">Xususiyatlar:</h4>
                             <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -298,7 +348,6 @@ export default function ProductDetail() {
                         </div>
                     </div>
 
-                    {/* Sharhlar */}
                     <div className="bg-white rounded-2xl p-8 shadow-sm">
                         <h3 className="text-xl font-bold text-brand-dark mb-4">
                             Sharhlar ({reviews.length})

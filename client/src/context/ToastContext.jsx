@@ -7,7 +7,7 @@ export const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
     const addToast = useCallback((message, type = 'success') => {
-        const id = Date.now();
+        const id = Date.now() + Math.random();
         setToasts(prev => [...prev, { id, message, type }]);
     }, []);
 
@@ -18,8 +18,10 @@ export const ToastProvider = ({ children }) => {
     return (
         <ToastContext.Provider value={{ addToast }}>
             {children}
+
+            {/* Toast container - har bir toast alohida ko'rinadi */}
             <div className="fixed top-24 right-4 z-50 space-y-3">
-                {toasts.map(toast => (
+                {toasts.map((toast, index) => (
                     <Toast
                         key={toast.id}
                         message={toast.message}

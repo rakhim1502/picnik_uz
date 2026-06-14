@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Trash2, Edit, Package } from 'lucide-react';
 import ProductModal from '../../components/admin/ProductModal';
+import { motion } from 'framer-motion';
 
 export default function AdminProducts() {
     const [products, setProducts] = useState([]);
@@ -122,7 +123,24 @@ export default function AdminProducts() {
                                     {products.map((product) => (
                                         <tr key={product._id} className="hover:bg-gray-50 transition">
                                             <td className="px-6 py-4">
-                                                <img src={product.image} alt={product.name_uz} className="w-16 h-16 rounded-lg object-cover border border-gray-200" />
+                                                <div className="relative">
+                                                    <img
+                                                        src={product.image}
+                                                        alt={product.name_uz}
+                                                        className="w-16 h-16 rounded-lg object-cover border border-gray-200"
+                                                    />
+                                                    {/* Rasmlar soni badge */}
+                                                    {product.images && product.images.length > 1 && (
+                                                        <motion.span
+                                                            className="absolute -top-2 -right-2 bg-brand-green text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-md"
+                                                            initial={{ scale: 0 }}
+                                                            animate={{ scale: 1 }}
+                                                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                                        >
+                                                            {product.images.length}
+                                                        </motion.span>
+                                                    )}
+                                                </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="font-semibold text-brand-dark">{product.name_uz}</div>
@@ -179,42 +197,17 @@ export default function AdminProducts() {
                     <div className="md:hidden space-y-3">
                         {products.map((product) => (
                             <div key={product._id} className="bg-white rounded-xl shadow-sm p-4">
-                                <div className="flex gap-3">
-                                    {/* Rasm */}
+                                <div className="relative flex-shrink-0">
                                     <img
                                         src={product.image}
                                         alt={product.name_uz}
-                                        className="w-20 h-20 rounded-lg object-cover border border-gray-200 flex-shrink-0"
+                                        className="w-20 h-20 rounded-lg object-cover border border-gray-200"
                                     />
-
-                                    {/* Ma'lumotlar */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="font-semibold text-brand-dark truncate">
-                                            {product.name_uz}
-                                        </div>
-                                        <div className="text-xs text-gray-500 mt-0.5 truncate">
-                                            {product.name_ru}
-                                        </div>
-
-                                        <span className="inline-block bg-brand-sand text-brand-dark text-xs font-medium px-2 py-0.5 rounded mt-2">
-                                            {product.category}
+                                    {product.images && product.images.length > 1 && (
+                                        <span className="absolute -top-2 -right-2 bg-brand-green text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-md">
+                                            {product.images.length}
                                         </span>
-
-                                        <div className="mt-2">
-                                            <div className="font-bold text-brand-green text-sm whitespace-nowrap">
-                                                {formatPrice(product.price)} so'm
-                                            </div>
-                                            {product.oldPrice && (
-                                                <div className="text-xs text-gray-400 line-through whitespace-nowrap">
-                                                    {formatPrice(product.oldPrice)}
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="text-xs text-gray-600 mt-1">
-                                            Ombor: <span className={`font-medium ${product.stock < 5 ? 'text-red-600' : 'text-gray-700'}`}>{product.stock} dona</span>
-                                        </div>
-                                    </div>
+                                    )}
                                 </div>
 
                                 {/* Amallar tugmalari */}

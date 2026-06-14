@@ -398,9 +398,11 @@ router.get('/products/:id', protectAdmin, async (req, res) => {
 });
 
 // Yangi mahsulot qo'shish
+// Yangi mahsulot qo'shish
 router.post('/products', protectAdmin, async (req, res) => {
     try {
-        const { name_uz, name_ru, category, price, oldPrice, stock, image, description } = req.body;
+        const { name_uz, name_ru, category, price, oldPrice, stock, image, images, description } = req.body;
+        // ↑ images qo'shildi!
 
         // Validatsiya
         if (!name_uz || !name_ru || !category || !price || !image) {
@@ -420,6 +422,7 @@ router.post('/products', protectAdmin, async (req, res) => {
             oldPrice: oldPrice ? Number(oldPrice) : null,
             stock: Number(stock) || 0,
             image,
+            images: images && images.length > 0 ? images : [image], // ← TO'G'RI
             description: description || '',
             slug
         });
@@ -435,7 +438,7 @@ router.post('/products', protectAdmin, async (req, res) => {
 // Mahsulotni tahrirlash
 router.put('/products/:id', protectAdmin, async (req, res) => {
     try {
-        const { name_uz, name_ru, category, price, oldPrice, stock, image, description } = req.body;
+        const { name_uz, name_ru, category, price, oldPrice, stock, image, images, description } = req.body;
 
         const product = await Product.findById(req.params.id);
         if (!product) {
@@ -450,6 +453,7 @@ router.put('/products/:id', protectAdmin, async (req, res) => {
         if (oldPrice !== undefined) product.oldPrice = oldPrice ? Number(oldPrice) : null;
         if (stock !== undefined) product.stock = Number(stock);
         if (image) product.image = image;
+        if (images !== undefined) product.images = images; // ← YANGI
         if (description !== undefined) product.description = description;
 
         // Slug ni yangilash agar name_uz o'zgargan bo'lsa

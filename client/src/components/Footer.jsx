@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-// import { MapPin, Phone, Mail, Instagram, Send} from 'lucide-react';
+// import { Mail, Instagram, Send } from 'lucide-react';
+import { FiMail, FiInstagram, FiSend} from 'react-icons/fi';
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -20,14 +21,17 @@ export default function Footer() {
                             <a href="https://instagram.com/piknic_uz" target="_blank" rel="noopener noreferrer"
                                 className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-brand-green transition">
                                 {/* <Instagram className="w-5 h-5" /> */}
+                                <FiInstagram className="w-5 h-5" />
                             </a>
                             <a href="https://t.me/piknic_uz" target="_blank" rel="noopener noreferrer"
                                 className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-brand-green transition">
                                 {/* <Send className="w-5 h-5" /> */}
+                                <FiSend className="w-5 h-5" />
                             </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer"
+                            <a href="mailto:uzbrm95@gmail.com" target="_blank" rel="noopener noreferrer"
                                 className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-brand-green transition">
-                                
+                                {/* <Mail className="w-5 h-5" /> */}
+                                <FiMail className="w-5 h-5" />
                             </a>
                         </div>
                     </div>
@@ -46,16 +50,7 @@ export default function Footer() {
                                     Biz haqimizda
                                 </Link>
                             </li>
-                            <li>
-                                <Link to="/delivery" className="text-gray-400 hover:text-brand-green transition">
-                                    Yetkazib berish
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/contact" className="text-gray-400 hover:text-brand-green transition">
-                                    Kontakt
-                                </Link>
-                            </li>
+                           
                         </ul>
                     </div>
 
@@ -97,18 +92,18 @@ export default function Footer() {
                             <li className="flex items-center gap-3">
                                 {/* <Phone className="w-5 h-5 text-brand-green flex-shrink-0" /> */}
                                 <a href="tel:+998901234567" className="text-gray-400 hover:text-brand-green transition">
-                                    +998 90 123 45 67
+                                    +998 934091502
                                 </a>
                             </li>
                             <li className="flex items-center gap-3">
                                 {/* <Mail className="w-5 h-5 text-brand-green flex-shrink-0" /> */}
                                 <a href="mailto:info@piknic.uz" className="text-gray-400 hover:text-brand-green transition">
-                                    info@piknic.uz
+                                    ✉︎ uzbrm95@gmail.com
                                 </a>
                             </li>
                         </ul>
 
-                        {/* Payment Methods */}
+                        {/* Payment Methods
                         <div className="mt-6">
                             <h5 className="text-sm font-semibold mb-3 text-gray-300">To'lov usullari:</h5>
                             <div className="flex gap-2">
@@ -116,7 +111,7 @@ export default function Footer() {
                                 <div className="px-3 py-1.5 bg-white/10 rounded text-xs font-medium">Click</div>
                                 <div className="px-3 py-1.5 bg-white/10 rounded text-xs font-medium">Uzum</div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

@@ -77,5 +77,54 @@ router.get('/:slug', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+// Eng ko'p sotilgan mahsulotlar (popular)
+router.get('/popular', async (req, res) => {
+    try {
+        const { limit = 8 } = req.query;
+
+        // Buyurtmalardan eng ko'p sotilgan mahsulotlarni topish
+        const popularProducts = await Order.aggregate([
+            { $match: { status: { $ne: 'Bekor qilindi' } } }, // Bekor qilinganlarni hisoblamaslik
+            { $unwind: '$orderItems' },
+            {
+                $group: {
+                    _id: '$orderItems.product',
+                    totalQty: { $sum: '$orderItems.qty' },
+                    totalRevenue: { $sum: { $multiply: ['$orderItems.price', '$orderItems.qty'] } }
+                }
+            },
+            { $sort: { totalQty: -1 } }, // Eng ko'p sotilgan birinchi
+            { $limit: parseInt(limit) }
+        ]);
+
+        // Mahsulot ID larini olish
+        const productIds = popularProducts.map(p => p._id);
+
+        // Mahsulotlarni to'liq ma'lumotlari bilan olish
+        const products = await Product.find({ _id: { $in: productIds } })
+            .sort({
+                createdAt: -1
+            });
+
+        // Popularlik ma'lumotlarini qo'shish
+        const productsWithPopularity = products.map(product => {
+            const popularData = popularProducts.find(p => p._id.toString() === product._id.toString());
+            return {
+                ...product.toObject(),
+                totalSold: popularData?.totalQty || 0,
+                totalRevenue: popularData?.totalRevenue || 0
+            };
+        });
+
+        res.json({
+            success: true,
+            products: productsWithPopularity,
+            count: productsWithPopularity.length
+        });
+    } catch (error) {
+        console.error('Popular mahsulotlarni olishda xatolik:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
 
 module.exports = router;
