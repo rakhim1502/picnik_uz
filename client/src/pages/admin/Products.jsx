@@ -194,20 +194,55 @@ export default function AdminProducts() {
                     </div>
 
                     {/* Mobile Kartalar - faqat mobil ekranlarda */}
+                    {/* Mobile Kartalar */}
                     <div className="md:hidden space-y-3">
                         {products.map((product) => (
                             <div key={product._id} className="bg-white rounded-xl shadow-sm p-4">
-                                <div className="relative flex-shrink-0">
-                                    <img
-                                        src={product.image}
-                                        alt={product.name_uz}
-                                        className="w-20 h-20 rounded-lg object-cover border border-gray-200"
-                                    />
-                                    {product.images && product.images.length > 1 && (
-                                        <span className="absolute -top-2 -right-2 bg-brand-green text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-md">
-                                            {product.images.length}
+                                <div className="flex gap-3">
+                                    {/* Rasm */}
+                                    <div className="relative flex-shrink-0">
+                                        <img
+                                            src={product.image}
+                                            alt={product.name_uz}
+                                            className="w-20 h-20 rounded-lg object-cover border border-gray-200"
+                                        />
+                                        {product.images && product.images.length > 1 && (
+                                            <span className="absolute -top-2 -right-2 bg-brand-green text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-md">
+                                                {product.images.length}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Ma'lumotlar */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-semibold text-brand-dark truncate">
+                                            {product.name_uz}
+                                        </div>
+                                        <div className="text-xs text-gray-500 mt-0.5 truncate">
+                                            {product.name_ru}
+                                        </div>
+
+                                        <span className="inline-block bg-brand-sand text-brand-dark text-xs font-medium px-2 py-0.5 rounded mt-2">
+                                            {product.category}
                                         </span>
-                                    )}
+
+                                        <div className="mt-2">
+                                            <div className="font-bold text-brand-green text-sm">
+                                                {formatPrice(product.price)} so'm
+                                            </div>
+                                            {product.oldPrice && (
+                                                <div className="text-xs text-gray-400 line-through">
+                                                    {formatPrice(product.oldPrice)}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="text-xs text-gray-600 mt-1">
+                                            Ombor: <span className={`font-medium ${product.stock < 5 ? 'text-red-600' : 'text-gray-700'}`}>
+                                                {product.stock} dona
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* Amallar tugmalari */}
